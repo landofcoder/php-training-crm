@@ -1,4 +1,10 @@
-
+<?php
+/**
+ * CRM project
+ * @author developer
+ * @homepage https://github.com/
+ */
+?>
 <?php
         include ("db_connection.php");
         $connection = new connectionDatabase();
