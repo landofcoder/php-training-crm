@@ -1,6 +1,11 @@
 
-
-
+<?php
+/**
+ * CRM project
+ * @author developer
+ * @homepage https://github.com/
+ */
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
