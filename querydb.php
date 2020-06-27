@@ -63,13 +63,13 @@ if (isset($_REQUEST['add'])) {
     <link rel="stylesheet" href="css/custom.min.css" type="text/css" media="all">
 
     <script type="text/javascript">
-    function testConfirmDialog() {
-        var x = confirm("Are you sure you want to delete?");
-        if (x)
-            return true;
-        else
-            return false;
-    }
+        function testConfirmDialog() {
+            var x = confirm("Are you sure you want to delete?");
+            if (x)
+                return true;
+            else
+                return false;
+        }
     </script>
 
 </head>
@@ -117,10 +117,8 @@ if (isset($_REQUEST['add'])) {
                     echo "<td>{$row['address']}</td>";
                     echo "<td>{$row['email']}</td>";
                     echo "<td>{$row['phone']}</td>";
-                    echo "<td>" ?> <a href="editdb.php?edit=<?php echo $row['id']; ?>"
-                    class="btn btn-primary">Edit</a><?php echo "</td><td>" ?>
-                <a href="db_connection.php?del=<?php echo $row['id']; ?>" class="btn btn-danger"
-                    onclick="return confirm('Are you sure you want to Remove?');">Delete</a>
+                    echo "<td>" ?> <a href="editdb.php?edit=<?php echo $row['id']; ?>" class="btn btn-primary">Edit</a><?php echo "</td><td>" ?>
+                    <a href="db_connection.php?del=<?php echo $row['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to Remove?');">Delete</a>
                 <?php
                     echo "</td></tr>";
                 }

@@ -26,7 +26,6 @@ class ConnectionDataBase
         foreach ($array as $x => $x_value) {
             $sql = "SELECT * FROM customer WHERE $x LIKE '%$x_value%'";
         }
-        //$sql = "SELECT * FROM customer WHERE phone LIKE '%$array%'";
         $result = $this->connection->query($sql);
         return $result;
     }
@@ -61,7 +60,6 @@ class ConnectionDataBase
         if ($this->connection->query($sql)) {
             return true;
         } else {
-            echo "<br>Error: " . $sql . "<br>" . $this->connection->error;
             return false;
         }
     }
@@ -74,11 +72,33 @@ class ConnectionDataBase
         return $result;
     }
 
-    //function update database
-    function updateforData($array)
+    //function check trùng database
+    function duplicateDBPhone($phone)
     {
-        $sql = "UPDATE customer SET name = '$array[0]', birthday  ='$array[1]', gender ='$array[2]', city = '$array[3]', address = '$array[4]', email = '$array[5]', phone  = '$array[6]' WHERE  id = '$array[7]'";
+        $sql = "SELECT * FROM customer WHERE phone = '$phone'";
         $result = $this->connection->query($sql);
+        return $result;
+    }
+
+    function duplicateDBEmail($email)
+    {
+        $sql = "SELECT * FROM customer WHERE email ='$email'";
+        $result = $this->connection->query($sql);
+        return $result;
+    }
+
+    //function update database
+    function updateforData($arr2, $id)
+    {
+        $sql = "UPDATE customer SET ";
+
+        foreach ($arr2 as $x => $x_value) {
+            $sql = $sql . $x . " ='" . $x_value . "',";
+        }
+        $sql = substr($sql, 0, -1);
+        $sql = $sql . " WHERE  id = '" . $id . "';";
+        $connection = new mysqli('localhost', 'root', '', 'managecustomer') or die("Connection failed: %s\n" . $connection->error);
+        $result = $connection->query($sql);
         return $result;
     }
     //function delete database
@@ -104,6 +124,11 @@ function XssAttachSQL(&$arr)
     $arr['name'] =  htmlspecialchars($arr['name'], ENT_QUOTES, 'UTF-8');
     $arr['email'] =  htmlspecialchars($arr['email'], ENT_QUOTES, 'UTF-8');
     $arr['phone'] =  htmlspecialchars($arr['phone'], ENT_QUOTES, 'UTF-8');
+}
+
+function XssAttachSQLID(&$arr)
+{
+    $arr =  htmlspecialchars($arr, ENT_QUOTES, 'UTF-8');
 }
 
 $connection = new connectionDatabase();

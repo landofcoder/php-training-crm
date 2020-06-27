@@ -13,7 +13,6 @@ $check1 = $check2 = '';
 
 if (isset($_GET['edit'])) {
     $id  = addslashes($_GET['edit']);
-    XssAttachSQL($id);
 
     $result = $connection->selectforData($id);
     $array = mysqli_fetch_assoc($result);
@@ -31,36 +30,68 @@ if (isset($_GET['edit'])) {
 
 if (isset($_REQUEST['update'])) {
 
-    $arr[5] = addslashes($_POST['mail']);
-    $arr[6] = addslashes($_POST['phone']);
-    XssAttachSQL($array[5]);
-    XssAttachSQL($array[6]);
-    $result = $connection->duplicateDB($array[6], $array[5]);
+    $arr = array(
+        "name" => addslashes($_POST['name']),
+        "phone" => addslashes($_POST['phone']),
+        "email" => addslashes($_POST['email'])
+    );
+    XssAttachSQL($arr);
+    $result = $connection->duplicateDB($arr['phone'], $arr['email']); // lấy ra mail và phone mới
     $row = mysqli_fetch_assoc($result);
+
+    $id  = addslashes($_POST['id']);
+
+    $resultTEST = $connection->selectforData($id); //select để ra data cũ
+    $arrayTEST = mysqli_fetch_assoc($resultTEST);
+
+    $checkmail  = addslashes($_POST['emailcheck']);
+    $checkphone = addslashes($_POST['phonecheck']);
+
     if (empty($row)) {
-        $arr[0] = addslashes($_POST['name']);
-        $arr[1] = addslashes($_POST['birthday']);
-        $arr[2] = addslashes($_POST['gender']);
-        $arr[3] = addslashes($_POST['city']);
-        $arr[4] = addslashes($_POST['address']);
-        $arr[7] = addslashes($_POST['id']);
-        XssAttachSQL($array[0]);
-        XssAttachSQL($array[3]);
-        XssAttachSQL($array[4]);
+        $arr2 = array(
+            "name" => addslashes($_POST['name']),
+            "birthday" => addslashes($_POST['birthday']),
+            "gender" => addslashes($_POST['gender']),
+            "city" => addslashes($_POST['city']),
+            "address" => addslashes($_POST['address']),
+            "email" => addslashes($_POST['email']),
+            "phone" => addslashes($_POST['phone']),
+        );
+        $id =  addslashes($_POST['id']);
 
-        $array[0] = preg_replace('/\PL/u', ' ', $array[0]);
-        $array[3] = preg_replace('/\PL/u', ' ', $array[0]);
-        $array[4] = preg_replace('/\PL/u', ' ', $array[0]);
-        $array[5] = preg_replace('/\PL/u', ' ', $array[0]);
-        $array[6] = preg_replace('/\PL/u', ' ', $array[0]);
+        XssAttachSQL($arr2);
+        removeSpecialChar($arr2);
 
-        $result = $connection->updateforData($arr);
+        $result = $connection->updateforData($arr2, $id);
         header("Location:querydb.php");
     } else {
-        echo "<script>alert('E-mail or phone number already in use');</script>";
-        header("Location:querydb.php");
+        if ($row['email'] == $checkmail && $row['phone'] == $checkphone) {
+            $arr2 = array(
+                "name" => addslashes($_POST['name']),
+                "birthday" => addslashes($_POST['birthday']),
+                "gender" => addslashes($_POST['gender']),
+                "city" => addslashes($_POST['city']),
+                "address" => addslashes($_POST['address']),
+                "email" => addslashes($_POST['email']),
+                "phone" => addslashes($_POST['phone']),
+            );
+            $id =  addslashes($_POST['id']);
+
+            XssAttachSQL($arr2);
+            removeSpecialChar($arr2);
+
+            $result = $connection->updateforData($arr2, $id);
+            header("Location:querydb.php");
+        } else {
+            // echo "<script> alert('E-mail or phone number already in use');
+            //         window.location.assign('querydb.php');</script>";
+            echo "<script> alert('E-mail or phone number already in use');
+                window.location.href='querydb.php'</script>";
+        }
     }
 }
+
+
 
 ?>
 <!DOCTYPE html>
@@ -99,7 +130,7 @@ if (isset($_REQUEST['update'])) {
             <div class="form-row">
                 <div class="form-group col-sm-3" id="box1">
                     <label for="nEmail">Email</label>
-                    <input type="email" class="form-control" name="mail" id="mail"
+                    <input type="email" class="form-control" name="email" id="mail"
                         value="<?php echo $array['email']; ?>">
                 </div>
                 <div class="form-group col-sm-3" id="box2">
@@ -120,6 +151,8 @@ if (isset($_REQUEST['update'])) {
             <div class="form-row">
                 <div class="form-group col-sm-3" id="box2">
                     <input type="hidden" class="form-control" name="id" value="<?php echo $array['id']; ?>">
+                    <input type="hidden" class="form-control" name="emailcheck" value="<?php echo $array['email']; ?>">
+                    <input type="hidden" class="form-control" name="phonecheck" value="<?php echo $array['phone']; ?>">
                 </div>
             </div>
         </div>
