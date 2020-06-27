@@ -14,7 +14,7 @@ class ConnectionDataBase
         $this->connection = new mysqli($servername, $username, $password, $database) or die("Connection failed: %s\n" . $this->connection->error);
     }
 
-    //ngat ket noi database
+    //ngat ket noi databasa
     function Close()
     {
         $this->connection->close();
